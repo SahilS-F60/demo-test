@@ -17,9 +17,9 @@ export const store = configureStore({
     notifications: notificationsReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
-  // middleware: (getDefaultMiddleware) => {
-  //   getDefaultMiddleware().prepend(listenerMiddleware.middleware).concat(apiSlice.middleware);
-  // },
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware().prepend(listenerMiddleware.middleware).concat(apiSlice.middleware);
+  },
 });
 
 // Infer the type of `store`
