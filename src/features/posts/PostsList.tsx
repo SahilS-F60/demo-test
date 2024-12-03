@@ -1,3 +1,5 @@
+import classNames from 'classnames';
+
 import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -33,7 +35,7 @@ const PostExcerpt = ({ post }: PostExcerptProps) => {
 
 export default function PostsList() {
   // Calling the `useGetPostsQuery()` hook automatically fetches data!
-  const { data: posts = [], isLoading, isSuccess, isError, error } = useGetPostsQuery();
+  const { data: posts = [], isLoading, isFetching, refetch, isSuccess, isError, error } = useGetPostsQuery();
 
   const sortedPosts = useMemo(() => {
     const sortedPosts = posts.slice();
@@ -46,7 +48,12 @@ export default function PostsList() {
   if (isLoading) {
     content = <Spinner text="Loading..." />;
   } else if (isSuccess) {
-    content = sortedPosts.map((post) => <PostExcerpt key={post.id} post={post} />);
+    const renderedPosts = sortedPosts.map((post) => <PostExcerpt key={post.id} post={post} />);
+
+    const containerClassname = classNames('posts-container', {
+      disabled: isFetching,
+    });
+    content = <div className={containerClassname}>{renderedPosts}</div>;
   } else if (isError) {
     content = <div>{error.toString()}</div>;
   }
@@ -54,6 +61,7 @@ export default function PostsList() {
   return (
     <section className="posts-list">
       <h2>Posts</h2>
+      <button onClick={refetch}>Refetch Posts</button>
       {content}
     </section>
   );

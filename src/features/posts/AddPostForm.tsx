@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { addNewPost } from './postsSlice';
 import { selectCurrentUsername } from '../auth/authSlice';
+import { useAddNewPostMutation } from '../api/apiSlice';
 
 interface AddPostFormFields extends HTMLFormControlsCollection {
   postTitle: HTMLInputElement;
@@ -13,9 +14,8 @@ interface AddPostFormElements extends HTMLFormElement {
 }
 
 export default function AddPostForm() {
-  const [addRequestStatus, setAddRequestStatus] = useState<'idle' | 'pending'>('idle');
+  const [addNewPost, { isLoading }] = useAddNewPostMutation();
 
-  const dispatch = useAppDispatch();
   const userId = useAppSelector(selectCurrentUsername);
 
   // console.log(users);
@@ -31,16 +31,11 @@ export default function AddPostForm() {
     const form = e.currentTarget;
 
     try {
-      setAddRequestStatus('pending');
-      // Now we can pass these in as separate arguments,
-      // and the ID will be generated automatically
-      await dispatch(addNewPost({ title, content, user: userId })).unwrap();
+      await addNewPost({ title, content, user: userId }).unwrap();
 
       form.reset();
     } catch (err) {
       console.error('Failed to save this post: ', err);
-    } finally {
-      setAddRequestStatus('idle');
     }
   }
 
@@ -66,7 +61,7 @@ export default function AddPostForm() {
         <label htmlFor="postContent">Content:</label>
         <textarea id="postContent" name="postContent" defaultValue="" required />
 
-        <button>Save Post</button>
+        <button disabled={isLoading}>Save Post</button>
       </form>
     </section>
   );
