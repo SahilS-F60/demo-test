@@ -2,9 +2,11 @@ import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { createEntityAdapter, EntityState } from '@reduxjs/toolkit';
 import { sub } from 'date-fns';
 import { client } from '@/api/client';
-
 import { RootState } from '@/app/store';
+
+import { apiSlice } from '../api/apiSlice';
 import { logout } from '../auth/authSlice';
+
 import { createAppAsyncThunk } from '@/app/withTypes';
 import { AppStartListening } from '@/app/listenerMiddleware';
 
@@ -157,7 +159,8 @@ export const selectPostsError = (state: RootState) => state.posts.error;
 
 export const addPostsListeners = (startAppListening: AppStartListening) => {
   startAppListening({
-    actionCreator: addNewPost.fulfilled,
+    // actionCreator: addNewPost.fulfilled,
+    matcher: apiSlice.endpoints.addNewPost.matchFulfilled,
     effect: async (action, listenerApi) => {
       const { toast } = await import('react-tiny-toast');
 
