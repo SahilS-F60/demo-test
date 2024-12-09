@@ -6,6 +6,7 @@ import App from './App';
 
 import { store } from './app/store';
 import { worker } from './api/server';
+import { apiSliceWithUsers } from './features/users/usersSlice';
 
 import { fetchUsers } from './features/users/usersSlice';
 
@@ -17,7 +18,8 @@ async function start() {
   // Start our mock API server
   await worker.start({ onUnhandledRequest: 'bypass' });
 
-  store.dispatch(fetchUsers());
+  // store.dispatch(fetchUsers());
+  store.dispatch(apiSliceWithUsers.endpoints.getUsers.initiate());
 
   const root = createRoot(document.getElementById('root')!);
 
