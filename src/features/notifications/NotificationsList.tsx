@@ -4,19 +4,23 @@ import classNames from 'classnames';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import TimeAgo from '../../components/TimeAgo';
 import PostAuthor from '../posts/PostAuthor';
-import { allNotificationsRead, selectAllNotifications } from './notificationsSlice';
+import { allNotificationsRead, selectMetadataEntities, useGetNotificationsQuery } from './notificationsSlice';
 
 export default function NotificationsList() {
   const dispatch = useAppDispatch();
-  const notifications = useAppSelector(selectAllNotifications);
+  const { data: notifications = [] } = useGetNotificationsQuery();
+  const notificationsMetadata = useAppSelector(selectMetadataEntities);
 
   useLayoutEffect(() => {
     dispatch(allNotificationsRead());
   });
 
   const renderedNotifications = notifications.map((notification) => {
+    // Get the metadata object matching this notification
+    const metadata = notificationsMetadata[notification.id];
     const notificationClassname = classNames('notification', {
-      new: notification.isNew,
+      // re-enable the `isNew` check for styling
+      new: metadata.isNew,
     });
 
     return (
